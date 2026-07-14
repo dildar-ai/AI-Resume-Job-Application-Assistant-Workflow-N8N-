@@ -1,0 +1,17 @@
+Extract structured job information from this email. Return ONLY valid JSON, no other text, no markdown fences.
+
+Email:
+{{email_body}}
+
+Return this exact JSON shape:
+{
+  "company": "",
+  "job_title": "",
+  "required_skills": [],
+  "experience_level": "",
+  "location": "",
+  "salary": "",
+  "raw_summary": ""
+}
+
+If a field isn't mentioned, use an empty string or empty array. Do not guess.
