@@ -1,0 +1,567 @@
+{
+  "name": "AI Resume & Job Application Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 15,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "filters": {
+          "q": "(subject:job OR subject:opportunity OR subject:position OR subject:hiring) newer_than:1d"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        64,
+        0
+      ],
+      "id": "f6856dbc-7817-4777-89e6-d3f05c483655",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "1JaArzh80W4E21sI",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1910992b-5486-4409-a15b-6f34e6b07d60",
+              "leftValue": "={{ $json.snippet }}",
+              "rightValue": "internship",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "8581b781-a883-47db-b355-b86dd372c027",
+              "leftValue": "={{ $json.snippet }}",
+              "rightValue": "opportunity",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "9f27db88-dbf5-45ca-834b-298e4761439f",
+              "leftValue": "={{ $json.snippet }}",
+              "rightValue": "opportunities",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "375b3a49-ea40-4b10-878f-5be90037a856",
+              "leftValue": "={{ $json.snippet }}",
+              "rightValue": "job",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "b06403ac-9d9b-41b1-b21f-1651242eb5e8",
+              "leftValue": "={{ $json.snippet }}",
+              "rightValue": "role",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "59533bf7-1048-4a82-8fa5-e385b31da059",
+              "leftValue": "={{ $json.snippet }}",
+              "rightValue": "jobs",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "59f6eaa6-456b-4f73-9614-b79b605b69ec",
+              "leftValue": "={{ $json.snippet }}",
+              "rightValue": "hiring",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "da940853-91eb-45e7-a364-6db3a8137662",
+      "name": "If",
+      "notesInFlow": true,
+      "notes": "If node to check wheater email is job related or not. "
+    },
+    {
+      "parameters": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "options": {
+          "responseFormat": "text"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        352,
+        16
+      ],
+      "id": "723f0b4b-66a4-4a33-ab14-48eaa2a6cd92",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "wo1foSQwcCMOesXi",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const raw = $input.item.json.text; // adjust path based on actual response shape\nlet parsed;\ntry {\n  parsed = JSON.parse(raw);\n} catch (e) {\n  parsed = { error: \"parse_failed\", raw };\n}\nreturn { json: parsed };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        -192
+      ],
+      "id": "acc2f7b8-c98a-4bf4-973b-67350c3c52b3",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        320,
+        224
+      ],
+      "id": "e8218c9b-636b-413d-bc6a-7f6420f6e13d",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1QjvExeB_7l7U2VGsergGbthtzlQO9mqK",
+          "mode": "list",
+          "cachedResultName": "Dildar Hussain Resume-2.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/1QjvExeB_7l7U2VGsergGbthtzlQO9mqK/view?usp=drivesdk"
+        },
+        "options": {
+          "binaryPropertyName": "resume"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        736,
+        -192
+      ],
+      "id": "d69171b0-1221-4266-82e7-8fa836576a1a",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "SBEXySVjadLtsNPW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "resume",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        864,
+        -192
+      ],
+      "id": "3df45048-96ae-432f-a4ac-be31dc7e3f0d",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        -32
+      ],
+      "id": "1a229038-4fd4-455d-9b77-42358cecb98e",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "wo1foSQwcCMOesXi",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a career coach. Compare this resume against the job requirements and return ONLY valid JSON.\n\nJOB REQUIREMENTS:\n{{ $('Code in JavaScript').item.json.required_skills }}\n\n{{ $('Code in JavaScript').item.json.experience_level }}\n\n\nRESUME:\n{{$('Extract from File').item.json.text}}\n\nReturn this JSON:\n{\n  \"match_score\": 0,\n  \"matched_skills\": [],\n  \"missing_skills\": [],\n  \"reasoning\": \"\"\n}\n\nmatch_score is 0-100. Be honest, not generous.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        992,
+        -192
+      ],
+      "id": "9ce93838-2bad-406a-a69f-c5aeaddbdbcc",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extract structured job information from this email. Return ONLY valid JSON, no other text, no markdown fences.\n\nEmail:\n{{$json[\"body\"] || $json[\"snippet\"]}}\n\nReturn this exact JSON shape:\n{\n  \"company\": \"\",\n  \"job_title\": \"\",\n  \"required_skills\": [],\n  \"experience_level\": \"\",\n  \"location\": \"\",\n  \"salary\": \"\",\n  \"raw_summary\": \"\"\n}\n\nIf a field isn't mentioned, use an empty string or empty array. Do not guess. ",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        352,
+        -192
+      ],
+      "id": "1d4017b1-274c-4483-802c-464c13f20eec",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "eec8696d-46f5-4457-9c35-79c8be916d5e",
+              "leftValue": "={{ JSON.parse($json.text).match_score }}",
+              "rightValue": 70,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1248,
+        -192
+      ],
+      "id": "a5b9c4ce-3711-4929-8d18-0b22bf63d2c8",
+      "name": "If1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        208
+      ],
+      "id": "4524526c-4698-4558-af23-d06b76efe35a",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Rewrite this resume to better match the job below. Keep the same overall structure and length. Emphasize matched skills naturally — do not fabricate experience. Return plain text only, formatted as a resume (no markdown symbols).\n\nORIGINAL RESUME:\n{{$('Extract from File').item.json.text}}\n\nJOB REQUIREMENTS:\nRewrite this resume to better match the job below. Keep the same overall structure and length. Emphasize matched skills naturally — do not fabricate experience. Return plain text only, formatted as a resume (no markdown symbols).\n\nORIGINAL RESUME:\n{{$('Extract from File').item.json.text}}\n\nJOB REQUIREMENTS:\n{{ $('Code in JavaScript').item.json.required_skills }}\n\nMATCH ANALYSIS:\n{{JSON.stringify($json)}}\n\nMATCH ANALYSIS:\n{{JSON.stringify($json)}}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1376,
+        -192
+      ],
+      "id": "c3981f65-2995-444b-a636-f3d0d4f02873",
+      "name": "Basic LLM Chain2"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        -32
+      ],
+      "id": "43331df9-90cf-451f-b6ae-35e25c92e5bf",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "vCqqjnpvrN16w7Cn",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1632,
+        -192
+      ],
+      "id": "9a6d2f2c-4801-43eb-ac74-8b5a1511512e",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "name": "={{ JSON.parse($('Basic LLM Chain').item.json.text).job_title }} Resume",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "16kqgrdbWBPphGXTVu82TyMiirkNjVK29",
+          "mode": "list",
+          "cachedResultName": "Tailored Resume for Jobs",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/16kqgrdbWBPphGXTVu82TyMiirkNjVK29"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1760,
+        -192
+      ],
+      "id": "73d93457-f10a-4b9a-a1c5-5c3654a60cbf",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "SBEXySVjadLtsNPW",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain2": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f9f268ec-7dbf-4b37-b038-41dd87b70ac2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7e69ac7d0ef540885f0b8cb88fe5c8ee8c99eb545c7b01e2dd69a4e131441df5"
+  },
+  "nodeGroups": [],
+  "id": "kkhCFFe7PDLj6q7u",
+  "tags": []
+}
