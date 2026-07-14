@@ -1,0 +1,10 @@
+Rewrite this resume to better match the job below. Keep the same overall structure and length. Emphasize matched skills naturally — do not fabricate experience. Return plain text only, formatted as a resume (no markdown symbols).
+
+ORIGINAL RESUME:
+{{resume_text}}
+
+JOB REQUIREMENTS:
+{{job_requirements_json}}
+
+MATCH ANALYSIS:
+{{match_analysis_json}}
