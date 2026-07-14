@@ -6,6 +6,9 @@ Built to remove the repetitive part of job hunting (reading, comparing, rewritin
 
 ---
 
+<img width="1241" height="412" alt="image" src="https://github.com/user-attachments/assets/6a8176d1-1ff9-43d1-807a-3db4835609cc" />
+
+
 ## What it does
 
 1. Watches Gmail for new job-related emails
