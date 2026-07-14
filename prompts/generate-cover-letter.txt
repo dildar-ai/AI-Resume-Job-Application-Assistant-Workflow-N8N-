@@ -1,0 +1,7 @@
+Write a concise, natural-sounding cover letter (under 300 words) for this job application. No clichés like "I am writing to express my interest." Sound like a real person, not a template.
+
+JOB:
+{{job_requirements_json}}
+
+CANDIDATE BACKGROUND (from tailored resume):
+{{tailored_resume_text}}
